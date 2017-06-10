@@ -28,13 +28,11 @@ impl DjSetContainer {
         ret
     }
 
-    pub fn find(&mut self, djset: DjSet) -> DjSet {
-        match self.nodes[djset].parent {
-            Some(parent) => {
-                self.find(parent)
-            }
-            None => djset.clone()
+    pub fn find(&mut self, mut djset: DjSet) -> DjSet {
+        while let Some(p) = self.nodes[djset].parent {
+            djset = p
         }
+        djset
     }
 
     pub fn union(&mut self, left: DjSet, right: DjSet) {
@@ -45,6 +43,9 @@ impl DjSetContainer {
     }
 
     fn merge(&mut self, n0: DjSet, n1: DjSet) {
+        if n0 == n1 {
+            return
+        }
         self.nodes[n0].parent = Some(n1)
     }
 }
@@ -92,6 +93,15 @@ mod tests {
 
         assert!(dj.find(c) != dj.find(a));
         assert!(dj.find(c) != dj.find(b));
+    }
+
+    #[test]
+    fn should_not_marge_a_nod_by_it_self() {
+        let (mut dj, a, b) = dj_set_and_2_elements();
+
+        dj.union(a, a);
+
+        assert!(dj.find(a) == a);
     }
 
     #[test]
