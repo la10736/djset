@@ -5,6 +5,7 @@ struct Node{
     parent: Option<DjSet>
 }
 
+#[derive(Default)]
 pub struct DjSetContainer {
     nodes: Vec<Node>
 }
@@ -17,7 +18,7 @@ impl PartialEq for DjSetContainer {
 
 impl DjSetContainer {
     pub fn new() -> Self {
-        DjSetContainer { nodes: Vec::new() }
+        DjSetContainer::default()
     }
 
     pub fn add(&mut self) -> DjSet {
@@ -53,7 +54,7 @@ mod tests {
     use super::*;
 
     fn dj_set_and_2_elements() -> (DjSetContainer, DjSet, DjSet) {
-        let mut dj = DjSetContainer::new();
+        let mut dj: DjSetContainer = Default::default();
         let a = dj.add();
         let b = dj.add();
         (dj, a, b)
