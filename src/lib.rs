@@ -1,31 +1,28 @@
 
 pub type DjSet = usize;
 
-struct Node<'a>{
-    payload: &'a Payload,
+struct Node{
     parent: Option<DjSet>
 }
 
-pub struct DjSetContainer<'a> {
-    nodes: Vec<Node<'a>>
+pub struct DjSetContainer {
+    nodes: Vec<Node>
 }
 
-impl <'a> PartialEq for DjSetContainer<'a> {
+impl PartialEq for DjSetContainer {
     fn eq(&self, other: &Self) -> bool {
         (self as * const Self) == (other as * const Self)
     }
 }
 
-type Payload = i32;
-
-impl <'a> DjSetContainer<'a> {
+impl DjSetContainer {
     pub fn new() -> Self {
         DjSetContainer { nodes: Vec::new() }
     }
 
-    pub fn add(&mut self, payload: &'a Payload) -> DjSet {
+    pub fn add(&mut self) -> DjSet {
         let ret = self.nodes.len();
-        let node = Node::<'a> { payload: payload, parent: None };
+        let node = Node { parent: None };
         self.nodes.push(node);
         ret
     }
@@ -55,13 +52,11 @@ impl <'a> DjSetContainer<'a> {
 mod tests {
     use super::*;
 
-    static P: Payload = 12;
-
     #[test]
     fn two_elements_are_not_equivalent() {
         let mut dj = DjSetContainer::new();
-        let a = dj.add(&P);
-        let b = dj.add(&P);
+        let a = dj.add();
+        let b = dj.add();
 
         assert!(dj.find(a) != dj.find(b));
     }
@@ -69,7 +64,7 @@ mod tests {
     #[test]
     fn one_element_is_equivalent_to_itself() {
         let mut dj = DjSetContainer::new();
-        let a = dj.add(&P);
+        let a = dj.add();
 
         assert!(dj.find(a) == dj.find(a));
     }
@@ -77,8 +72,8 @@ mod tests {
     #[test]
     fn after_union_two_sets_should_become_equivalent() {
         let mut dj = DjSetContainer::new();
-        let a = dj.add(&P);
-        let b = dj.add(&P);
+        let a = dj.add();
+        let b = dj.add();
 
         dj.union(a, b);
 
