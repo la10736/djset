@@ -52,33 +52,59 @@ impl DjSetContainer {
 mod tests {
     use super::*;
 
-    #[test]
-    fn two_elements_are_not_equivalent() {
+    fn dj_set_and_2_elements() -> (DjSetContainer, DjSet, DjSet) {
         let mut dj = DjSetContainer::new();
         let a = dj.add();
         let b = dj.add();
+        (dj, a, b)
+    }
+
+    #[test]
+    fn two_elements_are_not_equivalent() {
+        let (mut dj, a, b) = dj_set_and_2_elements();
 
         assert!(dj.find(a) != dj.find(b));
     }
 
     #[test]
     fn one_element_is_equivalent_to_itself() {
-        let mut dj = DjSetContainer::new();
-        let a = dj.add();
+        let (mut dj, a, _b) = dj_set_and_2_elements();
 
         assert!(dj.find(a) == dj.find(a));
     }
 
     #[test]
     fn after_union_two_sets_should_become_equivalent() {
-        let mut dj = DjSetContainer::new();
-        let a = dj.add();
-        let b = dj.add();
+        let (mut dj, a, b) = dj_set_and_2_elements();
 
         dj.union(a, b);
 
         assert!(dj.find(a) == dj.find(b));
     }
 
+    #[test]
+    fn third_set_is_not_equivalent_to_a_merged_one() {
+        let (mut dj, a, b) = dj_set_and_2_elements();
+        let c = dj.add();
 
+        dj.union(a, b);
+
+        assert!(dj.find(c) != dj.find(a));
+        assert!(dj.find(c) != dj.find(b));
+    }
+
+    #[test]
+    fn should_be_transitive() {
+        let (mut dj, a, b) = dj_set_and_2_elements();
+        let c = dj.add();
+
+        dj.union(a, b);
+        dj.union(a, c);
+
+        assert!(dj.find(c) == dj.find(a));
+        assert!(dj.find(c) == dj.find(b));
+
+        //Sanity Check
+        assert!(dj.find(a) == dj.find(b));
+    }
 }
