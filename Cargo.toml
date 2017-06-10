@@ -1,0 +1,6 @@
+[package]
+name = "djset"
+version = "0.1.0"
+authors = ["michele <michele.damico@gmail.com>"]
+
+[dependencies]
