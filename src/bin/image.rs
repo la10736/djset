@@ -11,7 +11,7 @@ fn gray(buf: &[u8], w: usize, x:usize, y:usize) -> u8 {
     let r = buf[pos] as u32;
     let g = buf[pos+1] as u32;
     let b = buf[pos+2] as u32;
-    let a = buf[pos+3] as u32;
+    let _a = buf[pos+3] as u32;
 
     ((r + g + b)/ 3) as u8
 }
@@ -21,7 +21,9 @@ fn black(buf: &[u8], w: usize, x:usize, y:usize, threshold: u8) -> bool {
 }
 
 fn main() {
-    let decoder = png::Decoder::new(File::open("resources/tux.png").unwrap());
+    let image_path = "resources/tux.png";
+    let threshold = 128;
+    let decoder = png::Decoder::new(File::open(image_path).unwrap());
     let (info, mut reader) = decoder.read_info().unwrap();
 
     let mut buf = vec![0; info.buffer_size()];
@@ -32,7 +34,7 @@ fn main() {
 
     for x in 0..(info.width as usize) {
         for y in 0..(info.height as usize) {
-            if black(&buf, info.width as usize, x, y, 128) {
+            if black(&buf, info.width as usize, x, y, threshold) {
                 let n = dj.add();
                 ink_map.insert((x as i32, y as i32), n);
                 let (xx, yy) = (x as i32 - 1, y as i32);
@@ -42,7 +44,6 @@ fn main() {
                 let (xx, yy) = (x as i32, y as i32 - 1);
                 ink_map.get(&(xx, yy)).map(|d| dj.union(n, d.clone()));
             }
-            println!("{}:{} = {:?}", x, y, gray(&buf, info.width as usize, x as usize, y as usize));
         }
     }
 
@@ -51,5 +52,6 @@ fn main() {
         let d = dj.find(v);
         connected.insert(d);
     }
-    println!("{}", connected.len());
+    println!("Image at {} contains {} connected components [threshold={}]",
+             image_path, connected.len(), threshold);
 }
