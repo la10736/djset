@@ -1,8 +1,8 @@
 
-pub type DjSet = usize;
+pub type DjSetId = usize;
 
 struct Node{
-    parent: Option<DjSet>
+    parent: Option<DjSetId>
 }
 
 #[derive(Default)]
@@ -21,28 +21,28 @@ impl DjSetContainer {
         DjSetContainer::default()
     }
 
-    pub fn add(&mut self) -> DjSet {
+    pub fn add(&mut self) -> DjSetId {
         let ret = self.nodes.len();
         let node = Node { parent: None };
         self.nodes.push(node);
         ret
     }
 
-    pub fn find(&mut self, mut djset: DjSet) -> DjSet {
+    pub fn find(&mut self, mut djset: DjSetId) -> DjSetId {
         while let Some(p) = self.nodes[djset].parent {
             djset = p
         }
         djset
     }
 
-    pub fn union(&mut self, left: DjSet, right: DjSet) {
+    pub fn union(&mut self, left: DjSetId, right: DjSetId) {
         let left = self.find(left);
         let right = self.find(right);
 
         self.merge(left, right);
     }
 
-    fn merge(&mut self, n0: DjSet, n1: DjSet) {
+    fn merge(&mut self, n0: DjSetId, n1: DjSetId) {
         if n0 == n1 {
             return
         }
@@ -54,7 +54,7 @@ impl DjSetContainer {
 mod tests {
     use super::*;
 
-    fn dj_set_and_2_elements() -> (DjSetContainer, DjSet, DjSet) {
+    fn dj_set_and_2_elements() -> (DjSetContainer, DjSetId, DjSetId) {
         let mut dj: DjSetContainer = Default::default();
         let a = dj.add();
         let b = dj.add();
@@ -97,7 +97,7 @@ mod tests {
 
     #[test]
     fn should_not_marge_a_nod_by_it_self() {
-        let (mut dj, a, b) = dj_set_and_2_elements();
+        let (mut dj, a, _b) = dj_set_and_2_elements();
 
         dj.union(a, a);
 

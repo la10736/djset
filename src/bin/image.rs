@@ -4,7 +4,7 @@ extern crate djset;
 use std::fs::File;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use djset::{DjSet, DjSetContainer};
+use djset::{DjSetId, DjSetContainer};
 
 fn gray(buf: &[u8], w: usize, x:usize, y:usize) -> u8 {
     let pos = (x+ y*w) * 4;
@@ -29,7 +29,7 @@ fn main() {
     let mut buf = vec![0; info.buffer_size()];
     reader.next_frame(&mut buf).unwrap();
 
-    let mut ink_map: HashMap<(i32, i32), DjSet> = HashMap::new();
+    let mut ink_map: HashMap<(i32, i32), DjSetId> = HashMap::new();
     let mut dj = DjSetContainer::default();
 
     for x in 0..(info.width as usize) {
@@ -47,7 +47,7 @@ fn main() {
         }
     }
 
-    let mut connected: HashSet<DjSet> = HashSet::new();
+    let mut connected: HashSet<DjSetId> = HashSet::new();
     for (_coord, v) in ink_map {
         let d = dj.find(v);
         connected.insert(d);
