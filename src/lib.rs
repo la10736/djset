@@ -1,5 +1,8 @@
 
-pub type DjSetId = usize;
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub struct DjSetId {
+    id: usize
+}
 
 struct Node{
     parent: Option<DjSetId>
@@ -22,14 +25,14 @@ impl DjSetContainer {
     }
 
     pub fn add(&mut self) -> DjSetId {
-        let ret = self.nodes.len();
+        let ret = DjSetId { id: self.nodes.len() };
         let node = Node { parent: None };
         self.nodes.push(node);
         ret
     }
 
     pub fn find(&mut self, mut djset: DjSetId) -> DjSetId {
-        while let Some(p) = self.nodes[djset].parent {
+        while let Some(p) = self.nodes[djset.id].parent {
             djset = p
         }
         djset
@@ -46,7 +49,7 @@ impl DjSetContainer {
         if n0 == n1 {
             return
         }
-        self.nodes[n0].parent = Some(n1)
+        self.nodes[n0.id].parent = Some(n1)
     }
 }
 
